@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.riekoff.beethoven</groupId>
+	<artifactId>beethoven</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>beethoven</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<excludes>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.riekoff.beethoven.BHApp</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/zip.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+					<execution>
+						<id>unpack-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-control</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-control-ui</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-core</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-app</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-gl2.0</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-image</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-io</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-math</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-simulation</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-model</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cc.creativecomputing</groupId>
+			<artifactId>cc-realsense</artifactId>
+			<version>2.0</version>
+		</dependency>
+	</dependencies>
+
+	<!-- <repositories> <repository> <id>creativecomputing-builds.googlecode.com</id> 
+		<url>http://creativecomputing-builds.googlecode.com/svn/m2/releases</url> 
+		</repository> <repository> <id>dep.creativecomputing-builds.googlecode.com</id> 
+		<url>http://creativecomputing-builds.googlecode.com/svn/m2/dependencies</url> 
+		</repository> <repository> <id>snapshots.googlecode.com</id> <url>http://creativecomputing-builds.googlecode.com/svn/m2/snapshots</url> 
+		</repository> <repository> <id>clojars</id> <url>http://clojars.org/repo/</url> 
+		</repository> </repositories> -->
+</project>
