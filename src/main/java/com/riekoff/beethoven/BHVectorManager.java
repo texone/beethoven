@@ -205,6 +205,7 @@ public class BHVectorManager {
 			
 			double myNoteSheetRandom = CCMath.random();
 			double myZitatRandom = CCMath.random();
+			double myBlendRandom = CCMath.random();
 			
 			for(int i = 0; i < myNoteSheetPath.size();i++) {
 				CCVector3 myPoint = myNoteSheetPath.get(i);
@@ -228,7 +229,7 @@ public class BHVectorManager {
 				CCVector3 myBlendValue = new CCVector3(
 					CCMath.norm(j, 0, _myNoteSheetPathDatas.length - 1),
 					CCMath.norm(i, 0, myNoteSheetPath.size() - 1),
-					CCMath.random()
+					myBlendRandom
 				);
 				
 				myNewNoteSheetTargets.add(new CCParticleVector(myParticle, myNoteSheetPathData.get(i), myNoteSheetRandom));
