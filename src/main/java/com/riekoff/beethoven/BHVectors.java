@@ -20,7 +20,7 @@ public class BHVectors{
 	
 	public BHVectors(Path theSVG) {
 		CCSVGDocument myDocument = CCSVGIO.newSVG(theSVG);
-		contours = myDocument.contours(1);
+		contours = myDocument.contours(0.001);
 		centers = new ArrayList<>();
 		length = new ArrayList<>();
 		coverages = new double[contours.size()];

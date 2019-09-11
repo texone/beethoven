@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.creativecomputing.app.modules.CCAnimator;
+import cc.creativecomputing.controlui.CCControlApp;
+import cc.creativecomputing.controlui.timeline.controller.CCTransportController;
 import cc.creativecomputing.core.CCProperty;
+import cc.creativecomputing.core.logging.CCLog;
 import cc.creativecomputing.graphics.CCGraphics;
 import cc.creativecomputing.graphics.CCGraphics.CCBlendMode;
 import cc.creativecomputing.graphics.app.CCGL2Adapter;
@@ -23,6 +26,7 @@ import cc.creativecomputing.graphics.camera.CCCameraController;
 import cc.creativecomputing.graphics.export.CCScreenCaptureController;
 import cc.creativecomputing.graphics.font.CCFontIO;
 import cc.creativecomputing.graphics.shader.CCShaderBufferDebugger;
+import cc.creativecomputing.io.CCNIOUtil;
 import cc.creativecomputing.math.CCVector2;
 import cc.creativecomputing.math.CCVector3;
 import cc.creativecomputing.realsense.CCRealSenseTextures;
@@ -90,6 +94,9 @@ public class BHApp extends CCGL2Adapter {
 	
 	private BHVectorManager _myManager;
 	
+	private double _myLoopTime = 0;
+	private boolean _myPlay = false;
+	
 	@Override
 	public void init(CCGraphics g, CCAnimator theAnimator) {
 		g.noDebug();
@@ -113,35 +120,39 @@ public class BHApp extends CCGL2Adapter {
 		myBlends.add(new CCConstantBlend());
 		myBlends.add(_myManager.textureBlend);
 
-		
 		List<CCParticleRenderer> myRenderer = new ArrayList<>();
-
 		myRenderer.add(new CCSpringVolumentricLineRenderer(_mySprings, false));
 		myRenderer.add(new CCSpringLineRenderer(_mySprings));
 		myRenderer.add(_myManager.triangleRenderer);
 		myRenderer.add(new CCQuadRenderer());
 
-		
 		_myParticles = new CCParticles(g, myRenderer, myForces, myBlends, new ArrayList<>(), new ArrayList<>(), _myXres, _myYres);
 		CCParticlesIndexParticleEmitter emitter = new CCParticlesIndexParticleEmitter(_myParticles);
 		_myParticles.addEmitter(emitter);
 
 		_cCameraController = new CCCameraController(this, g, 100);
 
-		g.strokeWeight(0.5f);
-
-//		_myDebugger = new CCShaderBufferDebugger(_mySprings.idBuffer());
-//		_myParticleDebugger = new CCShaderBufferDebugger(_myParticles.infoData());
-
 		g.textFont(CCFontIO.createTextureMapFont("arial", 12));
 		
 		_myManager.setup(g, emitter);
+		keyReleased().add(e ->{
+			switch(e.keyCode()) {
+			case VK_P:
+				_myPlay = true;
+				_myLoopTime = 0;
+				CCLog.info("yo");
+				break;
+			}
+		});
+	}
+	
+	@Override
+	public void setupControls(CCControlApp theControlApp) {
+		timeline().loadProject(CCNIOUtil.dataPath("ablauf.json"));
 	}
 
-	int myIndex = 0;
-	double _myTextOffset = 0;
-	
-	double _myNoiseOffset = 0;
+	private double _myTextOffset = 0;
+	private double _myNoiseOffset = 0;
 	
 	private int _myUpdateCycles = 4;
 
@@ -151,8 +162,19 @@ public class BHApp extends CCGL2Adapter {
 		_myNoiseOffset += theAnimator.deltaTime() * _cNoiseSpeed;
 
 		_myRealSenseTextures.update(theAnimator);
+		CCTransportController myTransport = timeline().activeTimeline().transportController();
 		
 		for(int i = 0; i < _myUpdateCycles;i++) {
+			if(_myPlay) {
+				_myLoopTime += theAnimator.deltaTime() / _myUpdateCycles;
+				if(_myLoopTime >= myTransport.loopEnd()) {
+					_myPlay = false;
+					myTransport.time(0);
+				}else {
+					myTransport.time(_myLoopTime);
+				}
+			}
+			
 			_myNoteSheetTargetForce.pathAdd(_cDocumentPathOffset * _cDocumentPathScale);
 			_myNoteSheetTargetForce.noiseAdd(_myNoiseOffset);
 			_myNoteSheetTargetForce.noiseAmount(_cNoiseAmount);
@@ -201,6 +223,8 @@ public class BHApp extends CCGL2Adapter {
 			g.color(1f);
 			_myParticles.display(g);
 		}
+
+		//_myManager.display(g);
 		g.popMatrix();
 		
 		if(_cDebugDepth) {
@@ -219,7 +243,10 @@ public class BHApp extends CCGL2Adapter {
 
 	public static void main(String[] args) {
 		CCGL2Application myAppManager = new CCGL2Application(new BHApp());
-		myAppManager.glcontext().size(1800, 1368);
+		myAppManager.glcontext().size(3840, 2160);
+		myAppManager.glcontext().undecorated = true;
+		myAppManager.glcontext().windowX = 0;
+		myAppManager.glcontext().windowY = 0;
 		myAppManager.animator().framerate = 30;
 		myAppManager.animator().animationMode = CCAnimator.CCAnimationMode.FRAMERATE_PRECISE;
 		myAppManager.start();
