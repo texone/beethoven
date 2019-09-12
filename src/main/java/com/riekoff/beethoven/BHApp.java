@@ -89,12 +89,15 @@ public class BHApp extends CCGL2Adapter {
 	private double _cDocumentPathOffset = 0;
 	@CCProperty(name = "document path scale")
 	private double _cDocumentPathScale = 500;
+	@CCProperty(name = "min wait Time", min = 0, max = 60)
+	private double _cMinWaitTime = 10;
 
 	List<List<CCVector3>> myDebugDocumentSplines = new ArrayList<>();
 	
 	private BHVectorManager _myManager;
 	
 	private double _myLoopTime = 0;
+	private double _myWaitTime = 1000;
 	private boolean _myPlay = false;
 	
 	@Override
@@ -138,12 +141,35 @@ public class BHApp extends CCGL2Adapter {
 		keyReleased().add(e ->{
 			switch(e.keyCode()) {
 			case VK_P:
-				_myPlay = true;
-				_myLoopTime = 0;
-				CCLog.info("yo");
+				playLoop();
 				break;
 			}
 		});
+	}
+	
+	public void playLoop() {
+		if(_myPlay)return;
+		if(_myWaitTime < _cMinWaitTime)return;
+		_myPlay = true;
+		_myLoopTime = 0;
+		CCLog.info("yo");
+	}
+	
+	private void updateLoop(final CCAnimator theAnimator) {
+		_myWaitTime += theAnimator.deltaTime() / _myUpdateCycles;;
+		if(!_myPlay) return;
+
+		CCTransportController myTransport = timeline().activeTimeline().transportController();
+		
+		_myLoopTime += theAnimator.deltaTime() / _myUpdateCycles;
+		if(_myLoopTime >= myTransport.loopEnd()) {
+			_myPlay = false;
+			myTransport.time(0);
+			_myWaitTime = 0;
+			return;
+		}
+		
+		myTransport.time(_myLoopTime);
 	}
 	
 	@Override
@@ -155,6 +181,9 @@ public class BHApp extends CCGL2Adapter {
 	private double _myNoiseOffset = 0;
 	
 	private int _myUpdateCycles = 4;
+	
+	@CCProperty(name = "write hearbeat")
+	private boolean _cWriteHeartBeat = false;
 
 	@Override
 	public void update(final CCAnimator theAnimator) {
@@ -162,18 +191,13 @@ public class BHApp extends CCGL2Adapter {
 		_myNoiseOffset += theAnimator.deltaTime() * _cNoiseSpeed;
 
 		_myRealSenseTextures.update(theAnimator);
-		CCTransportController myTransport = timeline().activeTimeline().transportController();
+		
+		if(_myRealSenseTextures.amountInBounds > _cThreshold) {
+			playLoop();
+		}
 		
 		for(int i = 0; i < _myUpdateCycles;i++) {
-			if(_myPlay) {
-				_myLoopTime += theAnimator.deltaTime() / _myUpdateCycles;
-				if(_myLoopTime >= myTransport.loopEnd()) {
-					_myPlay = false;
-					myTransport.time(0);
-				}else {
-					myTransport.time(_myLoopTime);
-				}
-			}
+			updateLoop(theAnimator);
 			
 			_myNoteSheetTargetForce.pathAdd(_cDocumentPathOffset * _cDocumentPathScale);
 			_myNoteSheetTargetForce.noiseAdd(_myNoiseOffset);
@@ -182,7 +206,7 @@ public class BHApp extends CCGL2Adapter {
 			_myParticles.update(theAnimator);
 		}
 		
-		CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
+		if(_cWriteHeartBeat)CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
 	}
 
 	@CCProperty(name = "debug force field")
@@ -196,6 +220,9 @@ public class BHApp extends CCGL2Adapter {
 	
 	@CCProperty(name = "line alpha", min = 0, max = 1)
 	private double _cLineAlpha = 1;
+
+	@CCProperty(name = "threshold", min = 0, max = 1)
+	private double _cThreshold = 0.5;
 
 	@Override
 	public void display(CCGraphics g) {
@@ -230,14 +257,19 @@ public class BHApp extends CCGL2Adapter {
 		g.popMatrix();
 		
 		if(_cDebugDepth) {
-			g.pushMatrix();
-			g.color(255);
+			g.blend();
 			_myRealSenseTextures.drawPointCloud(g);
+			g.pushMatrix();
+			g.translate(-g.width()/2 + 100, -g.height()/2 + 100);
+			g.color(255);
 
 			g.color(255, 50);
-			g.rect(-g.width()/2 + 100, -g.height()/2 + 100, 1000, 20);
+			g.rect(0, 0, 1000, 20);
 			g.color(255);
-			g.rect(-g.width()/2 + 100, -g.height()/2 + 100,_myRealSenseTextures.amountInBounds *1000, 20);
+			g.rect(0, 0, _myRealSenseTextures.amountInBounds *1000, 20);
+			
+			g.color(255,0,0);
+			g.line(_cThreshold * 1000, 0,0, _cThreshold * 1000, 20, 0);
 			g.popMatrix();
 		}
 		

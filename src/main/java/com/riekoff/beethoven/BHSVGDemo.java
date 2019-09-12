@@ -35,7 +35,7 @@ public class BHSVGDemo extends CCGL2Adapter {
 
 	@Override
 	public void update(CCAnimator theAnimator) {
-		if(theAnimator.frames() % 30 == 0)CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
+		//if(theAnimator.frames() % 30 == 0)CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
 	}
 
 	@Override
