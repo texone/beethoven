@@ -42,7 +42,7 @@
         </EnvironmentVariables>
         <Arguments>
             
-            <Argument>-cp ./target/beethoven-1.0.jar com.riekoff.beethoven.BHSVGDemo</Argument!-->
+            <Argument>-cp ./target/beethoven-1.0.jar com.riekoff.beethoven.BHApp</Argument>
         </Arguments>
         <Heartbeat>
             <Heartbeat_File>./heartbeat.xml</Heartbeat_File>
@@ -52,10 +52,5 @@
         </Heartbeat>
         <WaitDuringStartup>10</WaitDuringStartup>
         <WaitDuringRestart>10</WaitDuringRestart>                
-        <!--Memory_Threshold>100000</Memory_Threshold>
-        <RestartDay>Monday</RestartDay>
-        <RestartTime>12:02</RestartTime>
-        <CheckMemoryTime>00:00</CheckMemoryTime>
-        <CheckTimedMemoryThreshold>150000</CheckTimedMemoryThreshold-->
     </Application>
 </WatchdogConfig>

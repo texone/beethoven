@@ -91,6 +91,8 @@ public class BHApp extends CCGL2Adapter {
 	private double _cDocumentPathScale = 500;
 	@CCProperty(name = "min wait Time", min = 0, max = 60)
 	private double _cMinWaitTime = 10;
+	@CCProperty(name = "speed", min = 1, max = 10)
+	private double _cSpeed = 4;
 
 	List<List<CCVector3>> myDebugDocumentSplines = new ArrayList<>();
 	
@@ -161,7 +163,7 @@ public class BHApp extends CCGL2Adapter {
 
 		CCTransportController myTransport = timeline().activeTimeline().transportController();
 		
-		_myLoopTime += theAnimator.deltaTime() / _myUpdateCycles;
+		_myLoopTime += theAnimator.deltaTime() / _myUpdateCycles * _cSpeed;
 		if(_myLoopTime >= myTransport.loopEnd()) {
 			_myPlay = false;
 			myTransport.time(0);
