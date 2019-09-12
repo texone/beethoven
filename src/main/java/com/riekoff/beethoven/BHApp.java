@@ -181,6 +181,8 @@ public class BHApp extends CCGL2Adapter {
 			_myZitatTargetForce.pathAdd(_myTextOffset);
 			_myParticles.update(theAnimator);
 		}
+		
+		CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
 	}
 
 	@CCProperty(name = "debug force field")

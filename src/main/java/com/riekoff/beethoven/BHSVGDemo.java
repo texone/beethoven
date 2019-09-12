@@ -35,6 +35,7 @@ public class BHSVGDemo extends CCGL2Adapter {
 
 	@Override
 	public void update(CCAnimator theAnimator) {
+		if(theAnimator.frames() % 30 == 0)CCNIOUtil.saveString(CCNIOUtil.appPath("hearbeat.xml"), "<heartbeat secondsSince1970=\""+System.currentTimeMillis() / 1000 +"\"/>");
 	}
 
 	@Override
@@ -46,17 +47,17 @@ public class BHSVGDemo extends CCGL2Adapter {
 		
 		g.rect(0,0,100,100);
 		
-		for(int i = 0; i < contours.size();i++) {
-			CCLinearSpline  myTextPoints = contours.get(i);
-
-			g.color(1f);
-			g.beginShape(CCDrawMode.POINTS);
-			for(CCVector3 myPoint:myTextPoints) {
-				g.vertex(myPoint);
-			}
-			g.endShape();
-			
-		}
+//		for(int i = 0; i < contours.size();i++) {
+//			CCLinearSpline  myTextPoints = contours.get(i);
+//
+//			g.color(1f);
+//			g.beginShape(CCDrawMode.POINTS);
+//			for(CCVector3 myPoint:myTextPoints) {
+//				g.vertex(myPoint);
+//			}
+//			g.endShape();
+//			
+//		}
 	}
 
 	public static void main(String[] args) {
