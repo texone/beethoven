@@ -107,7 +107,12 @@ public class BHApp extends CCGL2Adapter {
 		g.noDebug();
 		
 		_cScreenCaptureController = new CCScreenCaptureController(this);
-		_myRealSenseTextures = new CCRealSenseTextures();
+		
+		try{
+			_myRealSenseTextures = new CCRealSenseTextures();
+		}catch(Exception e) {
+			_myRealSenseTextures = null;
+		}
 		
 		_myManager = new BHVectorManager();
 		
@@ -118,7 +123,7 @@ public class BHApp extends CCGL2Adapter {
 		myForces.add(_mySprings = _myManager.springs);
 		myForces.add(_myNoteSheetTargetForce = _myManager.noteSheetTargetForce);
 		myForces.add(_myZitatTargetForce = _myManager.zitatTargetForce);
-		myForces.add(_myForceField = new CCTextureForceField2D(_myRealSenseTextures.forceField(), new CCVector2(1920d, -1080d), new CCVector2(0.5, 0.5)));
+		if(_myRealSenseTextures != null)myForces.add(_myForceField = new CCTextureForceField2D(_myRealSenseTextures.forceField(), new CCVector2(1920d, -1080d), new CCVector2(0.5, 0.5)));
 		myForces.add(new CCGravity());
 		
 		List<CCBlend> myBlends = new ArrayList<>();
@@ -147,6 +152,8 @@ public class BHApp extends CCGL2Adapter {
 				break;
 			}
 		});
+		
+		glContext().noCursor();
 	}
 	
 	public void playLoop() {
@@ -177,6 +184,8 @@ public class BHApp extends CCGL2Adapter {
 	@Override
 	public void setupControls(CCControlApp theControlApp) {
 		timeline().loadProject(CCNIOUtil.dataPath("ablauf.json"));
+		
+		if(_myRealSenseTextures == null)timeline().activeTimeline().transportController().play();
 	}
 
 	private double _myTextOffset = 0;
@@ -192,11 +201,13 @@ public class BHApp extends CCGL2Adapter {
 		_myTextOffset += theAnimator.deltaTime() * _cTextPathSpeed;
 		_myNoiseOffset += theAnimator.deltaTime() * _cNoiseSpeed;
 
-		_myRealSenseTextures.update(theAnimator);
-		
-		if(_myRealSenseTextures.amountInBounds > _cThreshold) {
-			playLoop();
+		if(_myRealSenseTextures != null) {
+			_myRealSenseTextures.update(theAnimator);
+			if(_myRealSenseTextures.amountInBounds > _cThreshold) {
+				playLoop();
+			}
 		}
+		
 		
 		for(int i = 0; i < _myUpdateCycles;i++) {
 			updateLoop(theAnimator);
@@ -228,7 +239,7 @@ public class BHApp extends CCGL2Adapter {
 
 	@Override
 	public void display(CCGraphics g) {
-		_myRealSenseTextures.preDisplay(g);
+		if(_myRealSenseTextures != null)_myRealSenseTextures.preDisplay(g);
 		for(int i = 0; i < _myUpdateCycles;i++) {
 			_myParticles.preDisplay(g);
 		}
@@ -241,7 +252,7 @@ public class BHApp extends CCGL2Adapter {
 		if(_cDebugForceField) {
 			g.pushMatrix();
 			g.color(1d);
-			_myForceField.display(g);
+			if(_myForceField != null)_myForceField.display(g);
 			g.popMatrix();
 		}
 
