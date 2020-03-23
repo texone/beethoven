@@ -259,32 +259,32 @@ public class BHVectorManager {
 	
 	public void display(CCGraphics g) {
 		
-//		for(int i = 0; i < _myZitatPaths.length;i++) {
-//			List<CCVector3> myTextPoints = _myZitatPaths[i];
-//			List<CCVector3> myPoints = _myNoteSheetPaths[i];
-//			
-//			g.color(1f,0.01);
-//			g.beginShape(CCDrawMode.LINES);
-//			for(int j = 0; j < myTextPoints.size();j++) {
-//				CCVector3 myTextPoint = myTextPoints.get(j);
-//				CCVector3 myPoint = myPoints.get(j);
-//
-//				double dist = myPoint.distance(myTextPoint);
-////				if(dist > 3000) {
-//				g.vertex(myPoint.x, linesTextures.height() - myPoint.y);
-//				g.vertex(myTextPoint.x, linesTextures.height() - myTextPoint.y);
-////				}
-//			}
-//			g.endShape();
-//			
-//			g.color(1f,0f,0f);
-//			g.beginShape(CCDrawMode.LINE_STRIP);
-//			for(int j = 0; j < myTextPoints.size();j++) {
-//				CCVector3 myTextPoint = myTextPoints.get(j);
-//				g.vertex(myTextPoint.x, linesTextures.height() - myTextPoint.y);
-//			}
-//			g.endShape();
-//		}
+		for(int i = 0; i < _myZitatPaths.length;i++) {
+			List<CCVector3> myTextPoints = _myZitatPaths[i];
+			List<CCVector3> myPoints = _myNoteSheetPaths[i];
+			
+			g.color(1f,0.01);
+			g.beginShape(CCDrawMode.LINES);
+			for(int j = 0; j < myTextPoints.size();j++) {
+				CCVector3 myTextPoint = myTextPoints.get(j);
+				CCVector3 myPoint = myPoints.get(j);
+
+				double dist = myPoint.distance(myTextPoint);
+//				if(dist > 3000) {
+				g.vertex(myPoint.x, linesTextures.height() - myPoint.y);
+				g.vertex(myTextPoint.x, linesTextures.height() - myTextPoint.y);
+//				}
+			}
+			g.endShape();
+			
+			g.color(1f,0f,0f);
+			g.beginShape(CCDrawMode.LINE_STRIP);
+			for(int j = 0; j < myTextPoints.size();j++) {
+				CCVector3 myTextPoint = myTextPoints.get(j);
+				g.vertex(myTextPoint.x, linesTextures.height() - myTextPoint.y);
+			}
+			g.endShape();
+		}
 		
 		for(int i = 0; i < _myZitatVectors.size();i++) {
 			CCLinearSpline  myTextPoints = _myZitatVectors.contours.get(i);
@@ -292,7 +292,7 @@ public class BHVectorManager {
 			g.color(1f,0f,0f);
 			g.beginShape(CCDrawMode.LINE_STRIP);
 			for(CCVector3 myPoint:myTextPoints) {
-				g.vertex(myPoint);
+				g.vertex(myPoint.x, linesTextures.height() - myPoint.y);
 			}
 			g.endShape();
 			

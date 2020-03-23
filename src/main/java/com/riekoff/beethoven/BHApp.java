@@ -266,7 +266,7 @@ public class BHApp extends CCGL2Adapter {
 			_myParticles.display(g);
 		}
 
-		//_myManager.display(g);
+//		_myManager.display(g);
 		g.popMatrix();
 		
 		if(_cDebugDepth) {
