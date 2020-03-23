@@ -1,4 +1,4 @@
 call mvn clean
 echo on
-call mvn install
+call mvn package
 echo on
